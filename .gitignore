@@ -1,3 +1,5 @@
 
 .idea/
-rock-paper-scissors-test.iml
+*.iml
+Would skip repository docker/containers/php.old/
+Would skip repository docker/containers/php/
