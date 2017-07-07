@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  nginx:
+      container_name: nginx
+      image: 'bitnami/nginx'
+      hostname: nginx
+      ports:
+          - '80:80'
+      links:
+          - phpfpm
+      volumes:
+          - ./logs/nginx:/opt/bitnami/nginx/logs
+          - ./docker/containers/nginx/vhosts:/bitnami/nginx/conf/vhosts
+          - ./var/www:/var/www
+  phpfpm:
+      container_name: php
+      hostname: php
+      build: ./docker/containers/php
+      image: krugerke/php:fpm
+      ports:
+          - '9000:9000'
+      volumes:
+          - ./var/www:/var/www
+          - ./docker/containers/php:/var/docker
+      env_file:
+          - ./docker/containers/php/php.env
+  mysql-data:
+      container_name: data
+      hostname: mysql-data
+      image: 'ubuntu'
+      volumes:
+         - db-data:/var/lib/mysql
+  mysql:
+      container_name: mysql
+      hostname: mysql
+      image: 'mariadb'
+      ports:
+          - '3306:3306'
+      volumes:
+          - db-data:/var/lib/mysql
+      env_file:
+          - ./docker/containers/mysql/mysql.env
+  phpmyadmin:
+      container_name: phpmyadmin
+      hostname: phpmyadmin
+      image: 'phpmyadmin/phpmyadmin'
+      restart: always
+      ports:
+         - '8080:80'
+      links:
+          - mysql:mysql
+      env_file:
+          - ./docker/containers/phpmysql/phpmysql.env
+volumes:
+  db-data:
